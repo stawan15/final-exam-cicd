@@ -8,7 +8,7 @@ import { errorHandler } from './middleware/errorHandler.js'
 dotenv.config()
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(helmet())
@@ -29,7 +29,22 @@ app.get('/api/health', (req, res) => {
 })
 
 // Routes
+import accountsRoutes from './routes/accounts.js'
+import invoicesRoutes from './routes/invoices.js'
+import cardsRoutes from './routes/cards.js'
+import investmentsRoutes from './routes/investments.js'
+import budgetsRoutes from './routes/budgets.js'
+import transactionsRoutes from './routes/transactions.js'
+import profileRoutes from './routes/profile.js'
+
 app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/accounts', accountsRoutes)
+app.use('/api/invoices', invoicesRoutes)
+app.use('/api/cards', cardsRoutes)
+app.use('/api/investments', investmentsRoutes)
+app.use('/api/budgets', budgetsRoutes)
+app.use('/api/transactions', transactionsRoutes)
+app.use('/api/profile', profileRoutes)
 
 // Error handling
 app.use(errorHandler)

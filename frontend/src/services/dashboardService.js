@@ -37,6 +37,15 @@ export const dashboardService = {
         }
     },
 
+    async createTransaction(transactionData) {
+        try {
+            return await api.post('/transactions', transactionData)
+        } catch (error) {
+            console.error('Error creating transaction:', error)
+            throw error
+        }
+    },
+
     async getRevenueData() {
         try {
             return await api.get('/dashboard/revenue')
