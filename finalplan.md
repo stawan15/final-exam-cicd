@@ -1,0 +1,1 @@
+i wannna website of finacial dashboard frontend with vue 3 and tailwind css and vite backend with nodejs and express and postgresql database supabase and use cicd pipeline use github actions and deploy vercel 
