@@ -35,14 +35,18 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use(errorHandler)
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`
-  ╔═══════════════════════════════════════════╗
-  ║  🚀 FinanceFlow API Server               ║
-  ║  Running on http://localhost:${PORT}        ║
-  ║  Environment: ${process.env.NODE_ENV || 'development'}            ║
-  ╚═══════════════════════════════════════════╝
-  `)
-})
+// Start server only if we are running locally
+if (process.env.NODE_ENV !== 'production' || process.env.RUN_LOCAL === 'true') {
+    app.listen(PORT, () => {
+        console.log(`
+      ╔═══════════════════════════════════════════╗
+      ║  🚀 FinanceFlow API Server               ║
+      ║  Running on http://localhost:${PORT}        ║
+      ║  Environment: ${process.env.NODE_ENV || 'development'}            ║
+      ╚═══════════════════════════════════════════╝
+      `)
+    })
+}
 
+// Export the app for Vercel serverless
 export default app
