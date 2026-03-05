@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', {
             if (demoSessionStr) {
                 const parts = demoSessionStr.split(':')
                 if (parts[1] > Date.now()) {
-                    this.user = { email: 'admin@financeflow.io', id: 'demo-user-123' }
+                    this.user = { email: 'admin@financeflow.io', id: '00000000-0000-0000-0000-000000000000' }
                     this.session = { user: this.user, access_token: 'demo-token' }
                     this.loading = false
                     return
@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', {
         async signIn(email, password) {
             // Demo credentials bypass
             if (email === 'admin@financeflow.io' && password === 'password123') {
-                this.user = { email: 'admin@financeflow.io', id: 'demo-user-123' }
+                this.user = { email: 'admin@financeflow.io', id: '00000000-0000-0000-0000-000000000000' }
                 this.session = { user: this.user, access_token: 'demo-token' }
                 // Set fake session for 1 hour
                 localStorage.setItem('demo_session', `true:${Date.now() + 3600000}`)
