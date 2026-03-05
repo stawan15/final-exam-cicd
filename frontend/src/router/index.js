@@ -18,16 +18,51 @@ const routes = [
                 name: 'Dashboard',
                 component: () => import('../views/DashboardView.vue'),
             },
-            // Dummy routes for sidebar links
-            { path: 'analytics', name: 'Analytics', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Analytics Page (Coming Soon)</div>' } },
-            { path: 'transactions', name: 'Transactions', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Transactions Page (Coming Soon)</div>' } },
-            { path: 'invoices', name: 'Invoices', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Invoices Page (Coming Soon)</div>' } },
-            { path: 'accounts', name: 'Accounts', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Accounts Page (Coming Soon)</div>' } },
-            { path: 'cards', name: 'Cards', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Cards Page (Coming Soon)</div>' } },
-            { path: 'investments', name: 'Investments', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Investments Page (Coming Soon)</div>' } },
-            { path: 'budgets', name: 'Budgets', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Budgets Page (Coming Soon)</div>' } },
-            { path: 'profile', name: 'Profile', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Profile Page (Coming Soon)</div>' } },
-            { path: 'settings', name: 'Settings', component: { template: '<div class="text-white text-2xl h-full flex items-center justify-center">Settings Page (Coming Soon)</div>' } },
+            {
+                path: 'analytics',
+                name: 'Analytics',
+                component: () => import('../views/AnalyticsView.vue'),
+            },
+            {
+                path: 'transactions',
+                name: 'Transactions',
+                component: () => import('../views/TransactionsView.vue'),
+            },
+            {
+                path: 'invoices',
+                name: 'Invoices',
+                component: () => import('../views/InvoicesView.vue'),
+            },
+            {
+                path: 'accounts',
+                name: 'Accounts',
+                component: () => import('../views/AccountsView.vue'),
+            },
+            {
+                path: 'cards',
+                name: 'Cards',
+                component: () => import('../views/CardsView.vue'),
+            },
+            {
+                path: 'investments',
+                name: 'Investments',
+                component: () => import('../views/InvestmentsView.vue'),
+            },
+            {
+                path: 'budgets',
+                name: 'Budgets',
+                component: () => import('../views/BudgetsView.vue'),
+            },
+            {
+                path: 'profile',
+                name: 'Profile',
+                component: () => import('../views/ProfileView.vue'),
+            },
+            {
+                path: 'settings',
+                name: 'Settings',
+                component: () => import('../views/SettingsView.vue'),
+            },
         ],
     },
 ]
