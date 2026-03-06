@@ -39,7 +39,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 --   AFTER INSERT ON auth.users
 --   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
--- Seed data for demo user
-INSERT INTO profiles (id, first_name, last_name, workspace_name, currency, theme)
-VALUES ('00000000-0000-0000-0000-000000000000', 'System', 'Admin', 'FinanceFlow HQ', 'USD', 'dark')
-ON CONFLICT (id) DO NOTHING;
+-- Note: The trigger public.handle_new_user() will automatically create profiles for new signups.
+-- To fix the demo account ('00000000-0000-0000-0000-000000000000'), 
+-- you must first create that user in the Supabase Auth dashboard.

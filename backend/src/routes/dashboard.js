@@ -1,6 +1,5 @@
 import { Router } from 'express'
-import supabase from '../config/supabase.js'
-import { mockStats, mockTransactions, mockRevenueData, mockExpenses } from '../seed/seedData.js'
+import prisma from '../config/prisma.js'
 import { requireAuth } from '../middleware/auth.js'
 
 const router = Router()
@@ -10,23 +9,17 @@ router.use(requireAuth)
 // GET /api/dashboard/stats
 router.get('/stats', async (req, res, next) => {
     try {
-        if (supabase) {
-            const { data, error } = await supabase
-                .from('dashboard_stats')
-                .select('*')
-                .eq('user_id', req.user.id)
-                .single()
+        const data = await prisma.dashboardStats.findFirst({
+            where: { userId: req.user.id },
+        })
 
-            if (data && !error) return res.json(data)
+        if (data) return res.json(data)
 
-            // If new user with no data, return empty stats
-            return res.json({
-                totalRevenue: 0, totalExpenses: 0, netProfit: 0, activeUsers: 0,
-                revenueChange: 0, expenseChange: 0, profitChange: 0, userChange: 0
-            })
-        }
-
-        res.json(req.user.id === '00000000-0000-0000-0000-000000000000' ? mockStats : {})
+        // If new user with no data, return empty stats
+        return res.json({
+            totalRevenue: 0, totalExpenses: 0, netProfit: 0, activeUsers: 0,
+            revenueChange: 0, expenseChange: 0, profitChange: 0, userChange: 0
+        })
     } catch (error) {
         next(error)
     }
@@ -35,19 +28,12 @@ router.get('/stats', async (req, res, next) => {
 // GET /api/dashboard/transactions
 router.get('/transactions', async (req, res, next) => {
     try {
-        if (supabase) {
-            const { data, error } = await supabase
-                .from('transactions')
-                .select('*')
-                .eq('user_id', req.user.id)
-                .order('date', { ascending: false })
-                .limit(10)
-
-            if (!error && data) return res.json(data)
-            return res.json([])
-        }
-
-        res.json(req.user.id === '00000000-0000-0000-0000-000000000000' ? mockTransactions : [])
+        const data = await prisma.transaction.findMany({
+            where: { userId: req.user.id },
+            orderBy: { date: 'desc' },
+            take: 10,
+        })
+        res.json(data)
     } catch (error) {
         next(error)
     }
@@ -56,25 +42,19 @@ router.get('/transactions', async (req, res, next) => {
 // GET /api/dashboard/revenue
 router.get('/revenue', async (req, res, next) => {
     try {
-        if (supabase) {
-            const { data, error } = await supabase
-                .from('monthly_revenue')
-                .select('*')
-                .eq('user_id', req.user.id)
-                .order('id', { ascending: true }) // Assuming id represents month order
+        const data = await prisma.monthlyRevenue.findMany({
+            where: { userId: req.user.id },
+            orderBy: { id: 'asc' },
+        })
 
-            if (!error && data && data.length > 0) {
-                const labels = data.map(d => d.month_label)
-                const revenue = data.map(d => d.revenue)
-                const expenses = data.map(d => d.expenses)
-                return res.json({ labels, revenue, expenses })
-            }
-
-            // Empty user data
-            return res.json({ labels: [], revenue: [], expenses: [] })
+        if (data && data.length > 0) {
+            const labels = data.map(d => d.monthLabel)
+            const revenue = data.map(d => Number(d.revenue))
+            const expenses = data.map(d => Number(d.expenses))
+            return res.json({ labels, revenue, expenses })
         }
 
-        res.json(req.user.id === '00000000-0000-0000-0000-000000000000' ? mockRevenueData : { labels: [], revenue: [], expenses: [] })
+        return res.json({ labels: [], revenue: [], expenses: [] })
     } catch (error) {
         next(error)
     }
@@ -83,18 +63,11 @@ router.get('/revenue', async (req, res, next) => {
 // GET /api/dashboard/expenses
 router.get('/expenses', async (req, res, next) => {
     try {
-        if (supabase) {
-            const { data, error } = await supabase
-                .from('expense_categories')
-                .select('*')
-                .eq('user_id', req.user.id)
-                .order('amount', { ascending: false })
-
-            if (!error && data) return res.json(data)
-            return res.json([])
-        }
-
-        res.json(req.user.id === '00000000-0000-0000-0000-000000000000' ? mockExpenses : [])
+        const data = await prisma.expenseCategory.findMany({
+            where: { userId: req.user.id },
+            orderBy: { amount: 'desc' },
+        })
+        res.json(data)
     } catch (error) {
         next(error)
     }

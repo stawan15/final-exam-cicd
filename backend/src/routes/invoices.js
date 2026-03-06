@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import supabase from '../config/supabase.js'
+import prisma from '../config/prisma.js'
 import { requireAuth } from '../middleware/auth.js'
 
 const router = Router()
@@ -8,15 +8,11 @@ router.use(requireAuth)
 // GET /api/invoices
 router.get('/', async (req, res, next) => {
     try {
-        if (!supabase) return res.json([])
-        const { data, error } = await supabase
-            .from('invoices')
-            .select('*')
-            .eq('user_id', req.user.id)
-            .order('due_date', { ascending: false })
-
-        if (error) throw error
-        res.json(data || [])
+        const data = await prisma.invoice.findMany({
+            where: { userId: req.user.id },
+            orderBy: { dueDate: 'desc' },
+        })
+        res.json(data)
     } catch (error) {
         next(error)
     }
@@ -25,23 +21,17 @@ router.get('/', async (req, res, next) => {
 // POST /api/invoices
 router.post('/', async (req, res, next) => {
     try {
-        if (!supabase) return res.status(500).json({ error: 'DB disconnected' })
         const { client_name, invoice_number, amount, status, due_date } = req.body
-
-        const { data, error } = await supabase
-            .from('invoices')
-            .insert([{
-                user_id: req.user.id,
-                client_name,
-                invoice_number,
+        const data = await prisma.invoice.create({
+            data: {
+                userId: req.user.id,
+                clientName: client_name,
+                invoiceNumber: invoice_number,
                 amount,
                 status,
-                due_date
-            }])
-            .select()
-            .single()
-
-        if (error) throw error
+                dueDate: new Date(due_date),
+            },
+        })
         res.status(201).json(data)
     } catch (error) {
         next(error)
@@ -51,20 +41,18 @@ router.post('/', async (req, res, next) => {
 // PUT /api/invoices/:id/status
 router.put('/:id/status', async (req, res, next) => {
     try {
-        if (!supabase) return res.status(500).json({ error: 'DB disconnected' })
         const { id } = req.params
         const { status } = req.body
-
-        const { data, error } = await supabase
-            .from('invoices')
-            .update({ status })
-            .eq('id', id)
-            .eq('user_id', req.user.id)
-            .select()
-            .single()
-
-        if (error) throw error
-        res.json(data)
+        const data = await prisma.invoice.updateMany({
+            where: {
+                id: parseInt(id),
+                userId: req.user.id,
+            },
+            data: { status },
+        })
+        // Fetch updated record
+        const updated = await prisma.invoice.findUnique({ where: { id: parseInt(id) } })
+        res.json(updated)
     } catch (error) {
         next(error)
     }
@@ -73,15 +61,13 @@ router.put('/:id/status', async (req, res, next) => {
 // DELETE /api/invoices/:id
 router.delete('/:id', async (req, res, next) => {
     try {
-        if (!supabase) return res.status(500).json({ error: 'DB disconnected' })
         const { id } = req.params
-        const { error } = await supabase
-            .from('invoices')
-            .delete()
-            .eq('id', id)
-            .eq('user_id', req.user.id)
-
-        if (error) throw error
+        await prisma.invoice.deleteMany({
+            where: {
+                id: parseInt(id),
+                userId: req.user.id,
+            },
+        })
         res.status(204).send()
     } catch (error) {
         next(error)

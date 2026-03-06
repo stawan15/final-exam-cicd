@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  title     String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("tasks")
+}
+
+model DashboardStats {
+  id            Int     @id @default(autoincrement())
+  userId        String  @map("user_id") @db.Uuid
+  totalRevenue  Decimal @default(0) @map("total_revenue")
+  totalExpenses Decimal @default(0) @map("total_expenses")
+  netProfit     Decimal @default(0) @map("net_profit")
+  activeUsers   Int     @default(0) @map("active_users")
+  revenueChange Decimal @default(0) @map("revenue_change")
+  expenseChange Decimal @default(0) @map("expense_change")
+  profitChange  Decimal @default(0) @map("profit_change")
+  userChange    Decimal @default(0) @map("user_change")
+
+  @@map("dashboard_stats")
+}
+
+model Transaction {
+  id       Int      @id @default(autoincrement())
+  userId   String   @map("user_id") @db.Uuid
+  name     String
+  category String
+  amount   Decimal
+  status   String   @default("completed")
+  date     DateTime @default(now()) @db.Date
+  icon     String   @default("💰")
+
+  @@map("transactions")
+}
+
+model MonthlyRevenue {
+  id         Int     @id @default(autoincrement())
+  userId     String  @map("user_id") @db.Uuid
+  monthLabel String  @map("month_label")
+  revenue    Decimal @default(0)
+  expenses   Decimal @default(0)
+
+  @@map("monthly_revenue")
+}
+
+model ExpenseCategory {
+  id         Int     @id @default(autoincrement())
+  userId     String  @map("user_id") @db.Uuid
+  category   String
+  amount     Decimal @default(0)
+  percentage Int     @default(0)
+  color      String  @default("#000000")
+
+  @@map("expense_categories")
+}
+
+model UserAccount {
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id") @db.Uuid
+  name        String
+  type        String
+  balance     Decimal  @default(0)
+  numberLast4 String?  @map("number_last4")
+  status      String   @default("active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("user_accounts")
+}
+
+model Invoice {
+  id            Int      @id @default(autoincrement())
+  userId        String   @map("user_id") @db.Uuid
+  clientName    String   @map("client_name")
+  invoiceNumber String   @map("invoice_number")
+  amount        Decimal
+  status        String
+  dueDate       DateTime @map("due_date") @db.Date
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("invoices")
+}
+
+model Card {
+  id             Int      @id @default(autoincrement())
+  userId         String   @map("user_id") @db.Uuid
+  cardType       String   @map("card_type")
+  cardNetwork    String   @map("card_network")
+  lastFour       String   @map("last_four")
+  expiry         String
+  cardholderName String   @map("cardholder_name")
+  status         String   @default("active")
+  balance        Decimal  @default(0)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("cards")
+}
+
+model Investment {
+  id           Int      @id @default(autoincrement())
+  userId       String   @map("user_id") @db.Uuid
+  symbol       String
+  name         String
+  shares       Decimal
+  avgPrice     Decimal  @map("avg_price")
+  currentPrice Decimal  @map("current_price")
+  type         String
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("investments")
+}
+
+model Budget {
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id") @db.Uuid
+  category    String
+  limitAmount Decimal  @map("limit_amount")
+  spentAmount Decimal  @default(0) @map("spent_amount")
+  month       String
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("budgets")
+}
+
+model Profile {
+  id            String   @id @db.Uuid
+  firstName     String?  @map("first_name")
+  lastName      String?  @map("last_name")
+  workspaceName String?  @map("workspace_name")
+  currency      String?
+  theme         String?
+  avatarUrl     String?  @map("avatar_url")
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("profiles")
+}

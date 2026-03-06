@@ -1,5 +1,3 @@
-import supabase from '../config/supabase.js'
-
 export const requireAuth = async (req, res, next) => {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -13,15 +11,6 @@ export const requireAuth = async (req, res, next) => {
         return next()
     }
 
-    if (!supabase) {
-        return res.status(500).json({ error: 'Supabase client not configured' })
-    }
-
-    const { data: { user }, error } = await supabase.auth.getUser(token)
-    if (error || !user) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token' })
-    }
-
-    req.user = user
-    next()
+    // For non-demo tokens, reject (Supabase auth removed after Prisma migration)
+    return res.status(401).json({ error: 'Unauthorized: Invalid token' })
 }
